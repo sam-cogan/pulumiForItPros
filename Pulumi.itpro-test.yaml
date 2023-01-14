@@ -1,0 +1,10 @@
+encryptionsalt: v1:yULD4AypnaQ=:v1:hVZTDkJBcwujW6vJ:7+Om4XiSquIzIUM18U/cFuDjyW8Snw==
+config:
+  azure-native:location: NorthEurope
+  pulumi-it-pro:createStorageContainer: "true"
+  pulumi-it-pro:location: NorthEurope
+  pulumi-it-pro:namePrefix: itprotest
+  pulumi-it-pro:tags:
+    environment: test
+    owner: Sam Cogan
+  pulumi-it-pro:resourceGroupName: PulumiForItTesters
