@@ -1,0 +1,6 @@
+name: pulumi-it-pro
+runtime:
+  name: python
+  options:
+    virtualenv: venv
+description: Example project for Pulumi for IT pro series
