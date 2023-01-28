@@ -1,10 +1,18 @@
 encryptionsalt: v1:qAPgJCFAtEA=:v1:qikNvwdpdAYANRe6:F+YApAHaZso49G/EIyJ280Uzeqx9sw==
 config:
   azure-native:location: westeurope
-  pulumi-it-pro:createStorageContainer: "false"
+  pulumi-it-pro:createStorageContainer: "true"
   pulumi-it-pro:location: WestEurope
   pulumi-it-pro:namePrefix: itprodev
   pulumi-it-pro:tags:
     environment: development
     owner: Sam Cogan
   pulumi-it-pro:resourceGroupName: PulumiForItPros
+  pulumi-it-pro:storage-count: 2
+  pulumi-it-pro:storage-list:
+  - name: itprostorage001
+    sku: STANDARD_LRS
+  - name: developerstorage001
+    sku: STANDARD_GRS
+  - name: developerstorage002
+    sku: STANDARD_GRS

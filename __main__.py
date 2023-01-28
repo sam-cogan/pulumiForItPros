@@ -16,22 +16,40 @@ rg = resources.ResourceGroup('resourceGroup',
  tags = tags
 ) 
 
-stg = storage.StorageAccount('stg',
-    account_name= config.require("namePrefix")+"stg01",
-    resource_group_name= rg.name,
-    location= rg.location,
-    sku= storage.SkuArgs(
-        name= storage.SkuName.STANDARD_LRS
-        ),
-    kind= storage.Kind.STORAGE_V2,
-    tags= tags
+stg_count= config.require_int("storage-count")
 
-)
+for i in range(stg_count):
+    stg = storage.StorageAccount('stg'+str(i+1),
+        account_name= config.require("namePrefix")+"stg"+str(i+1),
+        resource_group_name= rg.name,
+        location= rg.location,
+        sku= storage.SkuArgs(
+            name= storage.SkuName.STANDARD_LRS
+            ),
+        kind= storage.Kind.STORAGE_V2,
+        tags= tags
 
-if config.require_bool("createStorageContainer"):
-    container = storage.BlobContainer("container",
-    account_name= stg.name,
-    container_name= "container1",
-    resource_group_name= rg.name,
-    public_access= "NONE"
     )
+
+    if config.require_bool("createStorageContainer"):
+        container = storage.BlobContainer("container"+str(i+1),
+        account_name= stg.name,
+        container_name= "container1",
+        resource_group_name= rg.name,
+        public_access= "NONE"
+        )
+
+storage_list = config.require_object("storage-list")
+
+for accountDetails in storage_list:
+    stg = storage.StorageAccount(accountDetails['name'],
+        account_name= accountDetails['name'],
+        resource_group_name= rg.name,
+        location= rg.location,
+        sku= storage.SkuArgs(
+            name= accountDetails['sku']
+            ),
+        kind= storage.Kind.STORAGE_V2,
+        tags= tags
+
+    )    

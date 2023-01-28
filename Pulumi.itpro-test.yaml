@@ -8,3 +8,5 @@ config:
     environment: test
     owner: Sam Cogan
   pulumi-it-pro:resourceGroupName: PulumiForItTesters
+  pulumi-it-pro:storage-count: 3
+  
