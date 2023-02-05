@@ -11,45 +11,59 @@ tags = config.require_object("tags")
 tags["dateCreated"] = date.today().isoformat()
 
 rg = resources.ResourceGroup('resourceGroup',
- resource_group_name= config.require("resourceGroupName"),
- location= config.require("location"),
- tags = tags
-) 
+                             resource_group_name=config.require(
+                                 "resourceGroupName"),
+                             location=config.require("location"),
+                             tags=tags,
+                             opts=pulumi.ResourceOptions(
+                                 ignore_changes=["tags.dateCreated"],
+                                 protect= True
+                             )
+                             )
 
-stg_count= config.require_int("storage-count")
+stg_count = config.require_int("storage-count")
 
 for i in range(stg_count):
     stg = storage.StorageAccount('stg'+str(i+1),
-        account_name= config.require("namePrefix")+"stg"+str(i+1),
-        resource_group_name= rg.name,
-        location= rg.location,
-        sku= storage.SkuArgs(
-            name= storage.SkuName.STANDARD_LRS
-            ),
-        kind= storage.Kind.STORAGE_V2,
-        tags= tags
+                                 account_name=config.require(
+                                     "namePrefix")+"stg"+str(i+1),
+                                 resource_group_name=rg.name,
+                                 location=rg.location,
+                                 sku=storage.SkuArgs(
+        name=storage.SkuName.STANDARD_LRS
+    ),
+        kind=storage.Kind.STORAGE_V2,
+        tags=tags,
+        opts=pulumi.ResourceOptions(
+        ignore_changes=["tags.dateCreated"],
+        depends_on=[rg]
+    )
 
     )
 
     if config.require_bool("createStorageContainer"):
         container = storage.BlobContainer("container"+str(i+1),
-        account_name= stg.name,
-        container_name= "container1",
-        resource_group_name= rg.name,
-        public_access= "NONE"
-        )
+                                          account_name=stg.name,
+                                          container_name="container1",
+                                          resource_group_name=rg.name,
+                                          public_access="NONE"
+                                          )
 
 storage_list = config.require_object("storage-list")
 
 for accountDetails in storage_list:
     stg = storage.StorageAccount(accountDetails['name'],
-        account_name= accountDetails['name'],
-        resource_group_name= rg.name,
-        location= rg.location,
-        sku= storage.SkuArgs(
-            name= accountDetails['sku']
-            ),
-        kind= storage.Kind.STORAGE_V2,
-        tags= tags
+                                 account_name=accountDetails['name'],
+                                 resource_group_name=rg.name,
+                                 location=rg.location,
+                                 sku=storage.SkuArgs(
+        name=accountDetails['sku']
+    ),
+        kind=storage.Kind.STORAGE_V2,
+        tags=tags,
+        opts=pulumi.ResourceOptions(
+        ignore_changes=["tags.dateCreated"]
+        
+    )
 
-    )    
+    )

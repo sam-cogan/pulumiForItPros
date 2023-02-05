@@ -14,5 +14,3 @@ config:
     sku: STANDARD_LRS
   - name: developerstorage001
     sku: STANDARD_GRS
-  - name: developerstorage002
-    sku: STANDARD_GRS
