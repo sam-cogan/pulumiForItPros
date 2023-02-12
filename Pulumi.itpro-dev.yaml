@@ -4,13 +4,15 @@ config:
   pulumi-it-pro:createStorageContainer: "true"
   pulumi-it-pro:location: WestEurope
   pulumi-it-pro:namePrefix: itprodev
+  pulumi-it-pro:resourceGroupName: PulumiForItPros
+  pulumi-it-pro:secret1:
+    secure: v1:yfZaFVlYnaso+1La:PcitgF7O5GxnJmmzNqGikwBhbf+haex3n7nX
+  pulumi-it-pro:storage-count: "2"
+  pulumi-it-pro:storage-list:
+    - name: itprostorage001
+      sku: STANDARD_LRS
+    - name: developerstorage001
+      sku: STANDARD_GRS
   pulumi-it-pro:tags:
     environment: development
     owner: Sam Cogan
-  pulumi-it-pro:resourceGroupName: PulumiForItPros
-  pulumi-it-pro:storage-count: 2
-  pulumi-it-pro:storage-list:
-  - name: itprostorage001
-    sku: STANDARD_LRS
-  - name: developerstorage001
-    sku: STANDARD_GRS

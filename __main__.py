@@ -23,6 +23,8 @@ rg = resources.ResourceGroup('resourceGroup',
 
 stg_count = config.require_int("storage-count")
 
+storageAccountIdList=[]
+
 for i in range(stg_count):
     stg = storage.StorageAccount('stg'+str(i+1),
                                  account_name=config.require(
@@ -40,6 +42,7 @@ for i in range(stg_count):
     )
 
     )
+    storageAccountIdList.append(stg.id)
 
     if config.require_bool("createStorageContainer"):
         container = storage.BlobContainer("container"+str(i+1),
@@ -67,3 +70,8 @@ for accountDetails in storage_list:
     )
 
     )
+    storageAccountIdList.append(stg.id)
+
+pulumi.export("secret", config.require_secret("secret1"))
+pulumi.export("ResourceGroupName", rg.name)
+pulumi.export("StorageAccounts", storageAccountIdList)
