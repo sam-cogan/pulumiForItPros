@@ -75,3 +75,10 @@ for accountDetails in storage_list:
 pulumi.export("secret", config.require_secret("secret1"))
 pulumi.export("ResourceGroupName", rg.name)
 pulumi.export("StorageAccounts", storageAccountIdList)
+
+rgname = rg.name.apply(lambda rgName: printResourceName(rgName))
+
+
+def printResourceName(resourceName):
+    print("Resource Name: " + resourceName)
+    print("Created On: " + str(date.today()))
