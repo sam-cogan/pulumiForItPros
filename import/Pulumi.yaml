@@ -1,0 +1,6 @@
+name: pulumi-import
+runtime:
+  name: python
+  options:
+    virtualenv: venv
+description: Import Demo

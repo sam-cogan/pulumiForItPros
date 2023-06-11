@@ -16,3 +16,4 @@ config:
   pulumi-it-pro:tags:
     environment: development
     owner: Sam Cogan
+  pulumi:disable-default-providers: ["*"]
