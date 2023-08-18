@@ -3,6 +3,9 @@
 import pulumi
 from pulumi_azure_native import storage
 from pulumi_azure_native import resources
+from pulumi_azure_native import provider
+import pulumi_aws_native
+
 from datetime import date
 
 config = pulumi.Config()
@@ -10,20 +13,23 @@ config = pulumi.Config()
 tags = config.require_object("tags")
 tags["dateCreated"] = date.today().isoformat()
 
-rg = resources.ResourceGroup('resourceGroup',
+rg = resources.ResourceGroup('rg',
                              resource_group_name=config.require(
                                  "resourceGroupName"),
                              location=config.require("location"),
                              tags=tags,
                              opts=pulumi.ResourceOptions(
                                  ignore_changes=["tags.dateCreated"],
-                                 protect= True
+                                 protect=True,
+                                 aliases=["resourceGroup"],
+                                 delete_before_replace=True,
+
                              )
                              )
 
 stg_count = config.require_int("storage-count")
 
-storageAccountIdList=[]
+storageAccountIdList = []
 
 for i in range(stg_count):
     stg = storage.StorageAccount('stg'+str(i+1),
@@ -38,7 +44,8 @@ for i in range(stg_count):
         tags=tags,
         opts=pulumi.ResourceOptions(
         ignore_changes=["tags.dateCreated"],
-        depends_on=[rg]
+        depends_on=[rg],
+        parent= [rg]
     )
 
     )
@@ -66,11 +73,40 @@ for accountDetails in storage_list:
         tags=tags,
         opts=pulumi.ResourceOptions(
         ignore_changes=["tags.dateCreated"]
-        
+
     )
 
     )
     storageAccountIdList.append(stg.id)
+
+
+secondSubProvider = provider.Provider("secondSubProvider",
+    subscription_id= "484f613c-dd2a-45b3-a8ea-6f87592ddb18",
+)
+
+
+secondSubStorage = storage.StorageAccount(
+    "secondSubStorage1",
+    account_name="stgsub2001",
+    resource_group_name="crossSubscriptionDeployment",
+    location=rg.location,
+    sku=storage.SkuArgs(
+    name="Standard_LRS"
+),
+    kind=storage.Kind.STORAGE_V2,
+    tags=tags,
+    opts=pulumi.ResourceOptions(
+    ignore_changes=["tags.dateCreated"],
+    provider= secondSubProvider
+
+) 
+)
+
+awsProvider = pulumi_aws_native.provider.Provider("awsProvider",
+    access_key= "zadsadsa",
+    secret_key= "zsadasdasd"
+)
+
 
 pulumi.export("secret", config.require_secret("secret1"))
 pulumi.export("ResourceGroupName", rg.name)
