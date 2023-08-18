@@ -13,14 +13,17 @@ config = pulumi.Config()
 tags = config.require_object("tags")
 tags["dateCreated"] = date.today().isoformat()
 
-rg = resources.ResourceGroup('resourceGroup',
+rg = resources.ResourceGroup('rg',
                              resource_group_name=config.require(
                                  "resourceGroupName"),
                              location=config.require("location"),
                              tags=tags,
                              opts=pulumi.ResourceOptions(
                                  ignore_changes=["tags.dateCreated"],
-                                 protect=True
+                                 protect=True,
+                                 aliases=["resourceGroup"],
+                                 delete_before_replace=True,
+
                              )
                              )
 
@@ -41,7 +44,8 @@ for i in range(stg_count):
         tags=tags,
         opts=pulumi.ResourceOptions(
         ignore_changes=["tags.dateCreated"],
-        depends_on=[rg]
+        depends_on=[rg],
+        parent= [rg]
     )
 
     )
