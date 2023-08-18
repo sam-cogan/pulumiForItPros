@@ -13,17 +13,14 @@ config = pulumi.Config()
 tags = config.require_object("tags")
 tags["dateCreated"] = date.today().isoformat()
 
-rg = resources.ResourceGroup('rg',
+rg = resources.ResourceGroup('resourceGroup',
                              resource_group_name=config.require(
                                  "resourceGroupName"),
                              location=config.require("location"),
                              tags=tags,
                              opts=pulumi.ResourceOptions(
                                  ignore_changes=["tags.dateCreated"],
-                                 protect=True,
-                                 aliases=["resourceGroup"],
-                                 delete_before_replace=True,
-
+                                 protect=True
                              )
                              )
 
@@ -44,8 +41,7 @@ for i in range(stg_count):
         tags=tags,
         opts=pulumi.ResourceOptions(
         ignore_changes=["tags.dateCreated"],
-        depends_on=[rg],
-        parent= [rg]
+        depends_on=[rg]
     )
 
     )
@@ -81,8 +77,13 @@ for accountDetails in storage_list:
 
 
 secondSubProvider = provider.Provider("secondSubProvider",
-    subscription_id= "484f613c-dd2a-45b3-a8ea-6f87592ddb18",
-)
+                                      subscription_id="484f613c-dd2a-45b3-a8ea-6f87592ddb18",
+                                      )
+
+pulumi.log.warn("Using Second Subscription Provider", secondSubProvider)
+
+secondSubProvider.id.apply(lambda subid: pulumi.log.info(
+    f"Second Sub ID: {subid}", secondSubProvider))
 
 
 secondSubStorage = storage.StorageAccount(
@@ -91,28 +92,21 @@ secondSubStorage = storage.StorageAccount(
     resource_group_name="crossSubscriptionDeployment",
     location=rg.location,
     sku=storage.SkuArgs(
-    name="Standard_LRS"
-),
+        name="Standard_LRS"
+    ),
     kind=storage.Kind.STORAGE_V2,
     tags=tags,
     opts=pulumi.ResourceOptions(
-    ignore_changes=["tags.dateCreated"],
-    provider= secondSubProvider
+        ignore_changes=["tags.dateCreated"],
+        provider=secondSubProvider
 
-) 
-)
-
-awsProvider = pulumi_aws_native.provider.Provider("awsProvider",
-    access_key= "zadsadsa",
-    secret_key= "zsadasdasd"
+    )
 )
 
 
 pulumi.export("secret", config.require_secret("secret1"))
 pulumi.export("ResourceGroupName", rg.name)
 pulumi.export("StorageAccounts", storageAccountIdList)
-
-rgname = rg.name.apply(lambda rgName: printResourceName(rgName))
 
 
 def printResourceName(resourceName):
