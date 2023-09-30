@@ -1,0 +1,29 @@
+name: deployment
+on:
+  workflow_dispatch:
+jobs:
+  preview:
+    name: preview
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.0
+      - name: Setup Python
+        uses: actions/setup-python@v4.7.0
+        with:
+          python-version: 3.11
+      - run: pip install -r requirements.txt 
+      - name: Pulumi CLI Action
+        uses: pulumi/actions@v4.5.0
+        with:
+          # Pulumi command to run, eg. up
+          command: preview
+          stack-name: pulumiforitpros/itpro-dev
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+          ARM_CLIENT_ID: ea59fc6c-9244-453f-9722-5557595e236e
+          ARM_SUBSCRIPTION_ID: 469048f1-92af-4c71-a63b-330ec31d2b82
+          ARM_TENANT_ID: 8f18eb27-4f87-4a88-b325-f8e6e7e43486
+          ARM_USE_OIDC: true
+          
+    
